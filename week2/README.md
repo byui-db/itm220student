@@ -42,7 +42,7 @@ All other columns should have `NN` checked unless there is a good reason to allo
 ### 5. Establish Relationships
 Identify the relationships between entities. Determine how entities are related to each other, such as a `customer` placing an `order`.
 
-### 8. Draw the ERD
+### 6. Draw the ERD
 Use an ERD tool to visually represent the entities, attributes, primary keys, and relationships.
 
 ## Example
