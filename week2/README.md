@@ -6,7 +6,7 @@ Create an Entity-Relationship Diagram (ERD) in the 3rd Normal Form (3NF) for the
 ## Normalization
 
 ### 1NF (First Normal Form)
-- <strong>Each</strong> table has a primary key.
+- <strong>Every</strong> table has a primary key. (No composite keys should be used.)
 - Each column contains only one value.
 - Follow best practices for naming columns and tables.
     - Column and table names should follow these rules:
