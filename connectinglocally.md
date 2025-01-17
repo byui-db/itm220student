@@ -47,9 +47,10 @@ Please be careful with this process as it will allow access to the database from
 
     - **Using the terminal**
         - Open the terminal.
+        Navigate to the folder where the PEM file is stored.
         - Run the following command:
         ```bash
-        ssh -i /path/to/itm220key.pem student@YOURIPADDRESS
+        ssh -i itm220key.pem student@YOURIPADDRESS
         ```
         - Use the following command to connect to the database:
         ```bash
