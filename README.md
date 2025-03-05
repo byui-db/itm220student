@@ -6,7 +6,7 @@
 # Setup
 1. Fork this repository to your own GitHub account. Only have one person do this (Teacher OR TA)
 2. Add this file to the `.gitignore` file.
-3. Uncomment all the weeks except the `week1` folder.
+3. Uncomment all the weeks.
 4. Have the students pull this repository `onto the Desktop` in their AWS instance by using the GitHub Desktop application or clone it onto their personal machine.
 5. If students are on a local machine, have them run the root.py file to grant access to the databases needed for the course.
    * This will create a user and grant access to databases for the students to use.
