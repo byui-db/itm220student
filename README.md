@@ -4,10 +4,13 @@
 
 
 # Setup
-1. Fork this repository to your own GitHub account. Only have one person do this (Teacher OR TA)
-2. Add this file to the `.gitignore` file.
-3. Have the students pull this repository `onto the Desktop` in their AWS instance by using the GitHub Desktop application or clone it onto their personal machine.
-4. If students are on a local machine, have them run the root.py file to grant access to the databases needed for the course.
+1. Clone the repository to your computer.
+2. Copy the whole folder and rename it to the following pattern: [teacher's last name]student[term first letter][2 digit year]
+   * For example: clarkstudentw25 (Clark student Winter 2025)
+3. Go into the folder and view hidden files.
+4. Delete the .git folder, uncomment all the commented lines in the .gitignore file, and reupload the file to GitHub as a `public` repository.
+5. Have the students pull this repository `onto the Desktop` in their AWS instance by using the GitHub Desktop application or clone it onto their personal machine.
+6. If students are on a local machine, have them run the root.py file to grant access to the databases needed for the course.
    * This will create a user and grant access to databases for the students to use.
    * On line 10, you may need to have the students change the password to their own password if on their local machine.
 
