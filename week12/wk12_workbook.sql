@@ -1,6 +1,6 @@
 -- *********************************
 -- W12 STUDENT SQL WORKBOOK
--- Chapter 9 questions
+-- Chapter 16 questions
 -- *********************************
 
 /*
@@ -19,573 +19,155 @@
     To remember this: Stay Firm (JOINED) With Our Lord
 */
 
-/*
-    Subqueries can appear in multiple different parts of a normal query
-    Subqueries are mainly found in the WHERE clause but can be used in 
-    the SELECT and FROM clauses too. 
-    
-    You can also write a Subquery before the normal query using a WITH statement
-    This is useful for doing aggregations before the main query
-    Example Template:
-    WITH subquery_alias AS (
-        Aggregate SELECT statement
-    )
-    Normal SELECT statement
+-- For all exercises in this section, use the following data set from the Sales_Fact table:
 
-    Practical Example:
-    --
-    This query finds the number of films each actor has been in
-    and limits them to the first 5 actors returned
-    --
-    WITH actor_film_count AS (
-    SELECT a.actor_id
-    ,      CONCAT(a.first_name, ' ', a.last_name) AS actor_name
-    ,      COUNT(fa.film_id) AS film_count
-    FROM   actor a
-    INNER JOIN film_actor fa 
-    ON a.actor_id = fa.actor_id
-    GROUP BY a.actor_id
-    )
-    SELECT actor_name
-    ,      film_count
-    FROM   actor_film_count
-    ORDER BY film_count DESC
-    LIMIT 5;
-
-*/
+-- Sales_Fact
+-- +---------+----------+-----------+
+-- | year_no | month_no | tot_sales |
+-- +---------+----------+-----------+
+-- |    2019 |        1 |     19228 |
+-- |    2019 |        2 |     18554 |
+-- |    2019 |        3 |     17325 |
+-- |    2019 |        4 |     13221 |
+-- |    2019 |        5 |      9964 |
+-- |    2019 |        6 |     12658 |
+-- |    2019 |        7 |     14233 |
+-- |    2019 |        8 |     17342 |
+-- |    2019 |        9 |     16853 |
+-- |    2019 |       10 |     17121 |
+-- |    2019 |       11 |     19095 |
+-- |    2019 |       12 |     21436 |
+-- |    2020 |        1 |     20347 |
+-- |    2020 |        2 |     17434 |
+-- |    2020 |        3 |     16225 |
+-- |    2020 |        4 |     13853 |
+-- |    2020 |        5 |     14589 |
+-- |    2020 |        6 |     13248 |
+-- |    2020 |        7 |      8728 |
+-- |    2020 |        8 |      9378 |
+-- |    2020 |        9 |     11467 |
+-- |    2020 |       10 |     13842 |
+-- |    2020 |       11 |     15742 |
+-- |    2020 |       12 |     18636 |
+-- +---------+----------+-----------+
+-- 24 rows in set (0.00 sec)
 
 USE sakila;
 
 -- --------------------------------------------------------------------------
--- 1. Construct a query against the film table that uses a filter condition 
--- with a NON CORRELATED subquery against the category table 
--- to find all action films (category.name = 'Action').
--- +-------------------------+
--- | title                   |
--- +-------------------------+
--- | AMADEUS HOLY            |
--- | AMERICAN CIRCUS         |
--- | ANTITRUST TOMATOES      |
--- | ARK RIDGEMONT           |
--- | BAREFOOT MANCHURIAN     |
--- | BERETS AGENT            |
--- ...
--- | TRUMAN CRAZY            |
--- | UPRISING UPTOWN         |
--- | WATERFRONT DELIVERANCE  |
--- | WEREWOLF LOLA           |
--- | WOMEN DORADO            |
--- | WORST BANGER            |
--- +-------------------------+
--- 64 rows in set (0.03 sec)
--- --------------------------------------------------------------------------
-SELECT title AS 'Title'
-FROM film
-WHERE film_id IN ( SELECT fc.film_id
-			       FROM film_category fc 
-                   INNER JOIN category c
-                   ON fc.category_id = c.category_id
-                   WHERE c.name = 'Action' );
+-- 1. Write a query that retrieves every row from sales_fact
+--    and add a column to generate a ranking based on the 
+--    tot_sales column values.
+--    The highest value should receive a ranking of 1, 
+--    and the lowest a ranking of 24.
+--    (Use RANK())
+--    Example Output:
+--    +---------+----------+-----------+------------+
+--    | year_no | month_no | tot_sales | sales_rank |
+--    +---------+----------+-----------+------------+
+--    |    2019 |       12 |     21436 |          1 |
+--    |    2020 |        1 |     20347 |          2 |
+--    |    2019 |        1 |     19228 |          3 |
+--    |    2019 |       11 |     19095 |          4 |
+--    |    2020 |       12 |     18636 |          5 |
+--    |    2019 |        2 |     18554 |          6 |
+--    |    2020 |        2 |     17434 |          7 |
+--    |    2019 |        8 |     17342 |          8 |
+--    |    2019 |        3 |     17325 |          9 |
+--    |    2019 |       10 |     17121 |         10 |
+--    |    2019 |        9 |     16853 |         11 |
+--    |    2020 |        3 |     16225 |         12 |
+--    |    2020 |       11 |     15742 |         13 |
+--    |    2020 |        5 |     14589 |         14 |
+--    |    2019 |        7 |     14233 |         15 |
+--    |    2020 |        4 |     13853 |         16 |
+--    |    2020 |       10 |     13842 |         17 |
+--    |    2020 |        6 |     13248 |         18 |
+--    |    2019 |        4 |     13221 |         19 |
+--    |    2019 |        6 |     12658 |         20 |
+--    |    2020 |        9 |     11467 |         21 |
+--    |    2019 |        5 |      9964 |         22 |
+--    |    2020 |        8 |      9378 |         23 |
+--    |    2020 |        7 |      8728 |         24 |
+--    +---------+----------+-----------+------------+
+--    24 rows in set (0.02 sec)
+-- -------------------------------------------------------------------------- 
+SELECT year_no AS 'Year Number'
+,      month_no AS 'Month Number'
+,      tot_sales AS 'Total Sales'
+,      RANK() OVER (ORDER BY tot_sales DESC) AS 'Sales Rank'
+FROM   sales_fact;
 
--- CTE (Common Table Expression) (Same as Above)
-WITH action_category AS (
-    SELECT fc.film_id
-    FROM film_category fc 
-    INNER JOIN category c
-    ON fc.category_id = c.category_id
-    WHERE c.name = 'Action'
-)
-SELECT title AS 'Title'
-FROM   film f
-INNER JOIN action_category ac
-ON     f.film_id = ac.film_id;
+-- -------------------------------------------------------------------------- 
+-- 2. Modify the query from the previous exercise to generate two sets
+--    of rankings from 1 to 12
+--    One for 2019 data
+--    One for 2020 data
+--   (Use RANK() and PARTITION BY)
+--    Example Output:
+--    +---------+----------+-----------+------------+
+--    | year_no | month_no | tot_sales | sales_rank |
+--    +---------+----------+-----------+------------+
+--    |    2019 |       12 |     21436 |          1 |
+--    |    2019 |        1 |     19228 |          2 |
+--    |    2019 |       11 |     19095 |          3 |
+--    |    2019 |        2 |     18554 |          4 |
+--    |    2019 |        8 |     17342 |          5 |
+--    |    2019 |        3 |     17325 |          6 |
+--    |    2019 |       10 |     17121 |          7 |
+--    |    2019 |        9 |     16853 |          8 |
+--    |    2019 |        7 |     14233 |          9 |
+--    |    2019 |        4 |     13221 |         10 |
+--    |    2019 |        6 |     12658 |         11 |
+--    |    2019 |        5 |      9964 |         12 |
+--    |    2020 |        1 |     20347 |          1 |
+--    |    2020 |       12 |     18636 |          2 |
+--    |    2020 |        2 |     17434 |          3 |
+--    |    2020 |        3 |     16225 |          4 |
+--    |    2020 |       11 |     15742 |          5 |
+--    |    2020 |        5 |     14589 |          6 |
+--    |    2020 |        4 |     13853 |          7 |
+--    |    2020 |       10 |     13842 |          8 |
+--    |    2020 |        6 |     13248 |          9 |
+--    |    2020 |        9 |     11467 |         10 |
+--    |    2020 |        8 |      9378 |         11 |
+--    |    2020 |        7 |      8728 |         12 |
+--    +---------+----------+-----------+------------+
+--    24 rows in set (0.00 sec)
+-- -------------------------------------------------------------------------- 
+SELECT year_no AS 'Year Number'
+,      month_no AS 'Month Number'
+,      tot_sales AS 'Total Sales'
+,      RANK() OVER (PARTITION BY year_no 
+                    ORDER BY tot_sales DESC) AS 'Sales Rank'
+FROM   sales_fact;
 
--- --------------------------------------------------------------------------
--- 2. Rework the query from Exercise 9-1 using a CORRELATED (f.film_id) subquery 
--- against the category and film_category tables 
--- to achieve the same results.
--- It should return 64 rows, like:
--- +-------------------------+
--- | title                   |
--- +-------------------------+
--- | AMADEUS HOLY            |
--- | AMERICAN CIRCUS         |
--- | ANTITRUST TOMATOES      |
--- | ARK RIDGEMONT           |
--- | BAREFOOT MANCHURIAN     |
--- | BERETS AGENT            |
--- ...
--- | TRUMAN CRAZY            |
--- | UPRISING UPTOWN         |
--- | WATERFRONT DELIVERANCE  |
--- | WEREWOLF LOLA           |
--- | WOMEN DORADO            |
--- | WORST BANGER            |
--- +-------------------------+
--- 64 rows in set (0.00 sec)
--- --------------------------------------------------------------------------
-SELECT f.title
-FROM film f
-WHERE EXISTS
-	(SELECT 1
-     FROM film_category fc INNER JOIN category c
-     ON fc.category_id = c.category_id
-     WHERE c.name = 'Action'
-     AND fc.film_id = f.film_id);
-
--- Chapter 14 Questions
-
--- ---------------------------------------------------------------------------
--- 3. Create a view definition called `film_ctgry_actor` 
--- that can be used by the following query to generate 
--- the given results from this query:
--- Write the view below this line vvvv
-CREATE OR REPLACE VIEW film_ctgry_actor AS
-SELECT f.title, c.name AS category_name, a.first_name, a.last_name
-FROM film f 
-INNER JOIN film_category fc
-ON f.film_id = fc.film_id
-INNER JOIN category c 
-ON fc.category_id = c.category_id
-INNER JOIN film_actor fa
-ON f.film_id = fa.film_id
-INNER JOIN actor a
-ON fa.actor_id = a.actor_id;
-
--- Write the view above this line ^^^^
-SELECT title
-,      category_name
-,      first_name
-,      last_name
-FROM   film_ctgry_actor
-WHERE  last_name = 'FAWCETT';
-
--- The view should produce the following result set:
-
--- +---------------------+---------------+------------+-----------+
--- | title               | category_name | first_name | last_name |
--- +---------------------+---------------+------------+-----------+
--- | ACE GOLDFINGER      | Horror        | BOB        | FAWCETT   |
--- | ADAPTATION HOLES    | Documentary   | BOB        | FAWCETT   |
--- | CHINATOWN GLADIATOR | New           | BOB        | FAWCETT   |
--- | CIRCUS YOUTH        | Children      | BOB        | FAWCETT   |
--- | CONTROL ANTHEM      | Comedy        | BOB        | FAWCETT   |
--- | DARES PLUTO         | Animation     | BOB        | FAWCETT   |
--- | DARN FORRESTER      | Action        | BOB        | FAWCETT   |
--- | DAZED PUNK          | Games         | BOB        | FAWCETT   |
--- | DYNAMITE TARZAN     | Classics      | BOB        | FAWCETT   |
--- | HATE HANDICAP       | Comedy        | BOB        | FAWCETT   |
--- | HOMICIDE PEACH      | Family        | BOB        | FAWCETT   |
--- | JACKET FRISCO       | Drama         | BOB        | FAWCETT   |
--- | JUMANJI BLADE       | New           | BOB        | FAWCETT   |
--- | LAWLESS VISION      | Animation     | BOB        | FAWCETT   |
--- | LEATHERNECKS DWARFS | Travel        | BOB        | FAWCETT   |
--- | OSCAR GOLD          | Animation     | BOB        | FAWCETT   |
--- | PELICAN COMFORTS    | Documentary   | BOB        | FAWCETT   |
--- | PERSONAL LADYBUGS   | Music         | BOB        | FAWCETT   |
--- | RAGING AIRPLANE     | Sci-Fi        | BOB        | FAWCETT   |
--- | RUN PACIFIC         | New           | BOB        | FAWCETT   |
--- | RUNNER MADIGAN      | Music         | BOB        | FAWCETT   |
--- | SADDLE ANTITRUST    | Comedy        | BOB        | FAWCETT   |
--- | SCORPION APOLLO     | Drama         | BOB        | FAWCETT   |
--- | SHAWSHANK BUBBLE    | Travel        | BOB        | FAWCETT   |
--- | TAXI KICK           | Music         | BOB        | FAWCETT   |
--- | BERETS AGENT        | Action        | JULIA      | FAWCETT   |
--- | BOILED DARES        | Travel        | JULIA      | FAWCETT   |
--- | CHISUM BEHAVIOR     | Family        | JULIA      | FAWCETT   |
--- | CLOSER BANG         | Comedy        | JULIA      | FAWCETT   |
--- | DAY UNFAITHFUL      | New           | JULIA      | FAWCETT   |
--- | HOPE TOOTSIE        | Classics      | JULIA      | FAWCETT   |
--- | LUKE MUMMY          | Animation     | JULIA      | FAWCETT   |
--- | MULAN MOON          | Comedy        | JULIA      | FAWCETT   |
--- | OPUS ICE            | Foreign       | JULIA      | FAWCETT   |
--- | POLLOCK DELIVERANCE | Foreign       | JULIA      | FAWCETT   |
--- | RIDGEMONT SUBMARINE | New           | JULIA      | FAWCETT   |
--- | SHANGHAI TYCOON     | Travel        | JULIA      | FAWCETT   |
--- | SHAWSHANK BUBBLE    | Travel        | JULIA      | FAWCETT   |
--- | THEORY MERMAID      | Animation     | JULIA      | FAWCETT   |
--- | WAIT CIDER          | Animation     | JULIA      | FAWCETT   |
--- +---------------------+---------------+------------+-----------+
--- 40 rows in set (0.39 sec)
--- ---------------------------------------------------------------------------
-
-
--- ---------------------------------------------------------------------------
--- 4. Rank actors based on the number of films they have appeared in, 
---    ensuring that actors with the same number of films receive the same rank 
---    (DENSE_RANK) without skipping numbers.
---    Limit to the top 40 actors.
--- ---------------------------------------------------------------------------
-WITH actor_film_count AS (
-    SELECT fa.actor_id
-    ,      a.first_name
-    ,      a.last_name
-    ,      COUNT(fa.film_id) AS film_count
-    FROM film_actor fa
-    INNER JOIN actor a
-        ON fa.actor_id = a.actor_id
-    GROUP BY fa.actor_id, a.first_name, a.last_name
-)
-SELECT actor_id AS 'Actor ID'
-,      first_name AS 'First Name'
-,      last_name AS 'Last Name'
-,      film_count AS 'Film Count'
-,      DENSE_RANK() OVER (ORDER BY film_count DESC) AS 'Rank'
-FROM actor_film_count
-LIMIT 40;
-
-
--- ---------------------------------------------------------------------------
--- 5. Using the following query as a starting point, create a self-join film_franchise view that displays 'None' for the top-most element in a series of sequels because it has no prequel:
-
-SELECT   f.title AS film
-,        fp.title AS prequel
-FROM     film f LEFT JOIN film fp
-ON       f.prequel_id = fp.film_id
-WHERE    f.series_name = 'Harry Potter'
-AND      fp.series_name = 'Harry Potter'
-ORDER BY f.series_number;
-
--- Hint: You need to use an IFNULL() and CASE statement to achieve the desired output. 
--- The output should display the following when you seed the film table with the 
--- Harry Potter franchise movies:
-
--- +----------------------------------------------+----------------------------------------------+
--- | film                                         | prequel                                      |
--- +----------------------------------------------+----------------------------------------------+
--- | Harry Potter and the Sorcerer's Stone        | None                                         |
--- | Harry Potter and the Chamber of Secrets      | Harry Potter and the Sorcerer's Stone        |
--- | Harry Potter and the Prisoner of Azkaban     | Harry Potter and the Chamber of Secrets      |
--- | Harry Potter and the Goblet of Fire          | Harry Potter and the Prisoner of Azkaban     |
--- | Harry Potter and the Order of the Phoenix    | Harry Potter and the Goblet of Fire          |
--- | Harry Potter and the Half Blood Prince       | Harry Potter and the Order of the Phoenix    |
--- | Harry Potter and the Deathly Hallows: Part 1 | Harry Potter and the Half Blood Prince       |
--- | Harry Potter and the Deathly Hallows: Part 2 | Harry Potter and the Deathly Hallows: Part 1 |
--- +----------------------------------------------+----------------------------------------------+
--- 8 rows in set (0.01 sec)
-
--- You will need to add three new columns to the film table and 
--- the following rows to the film table with the following set of INSERT statements. 
--- Copy the following (lines 274 - 579) into a seed.sql preparation script 
--- and run it before you begin working on the recursive query. 
--- Convert your query to a view when it works as noted above.
-
--- seed.sql
--- --------------------------------------------------
--- Use sakila database.
-USE sakila;
-
--- Add a prequel_id column to the sakila.film table.
-ALTER TABLE film
-ADD (series_name    varchar(20)),
-ADD (series_number  int unsigned),
-ADD (prequel_id     int unsigned);
- 
--- Set primary to foreign key local variable.
-SET @sv_film_id = 0;
- 
--- Insert Harry Potter films in sakila.film table with classic values clause.
-INSERT INTO film
-( title
-, description
-, release_year
-, language_id
-, original_language_id
-, rental_duration
-, rental_rate
-, length
-, replacement_cost
-, rating
-, special_features
-, last_update
-, series_name
-, series_number
-, prequel_id )
-VALUES
-('Harry Potter and the Sorcerer''s Stone'
-,'A film about a young boy who on his eleventh birthday discovers, he is the orphaned boy of two powerful wizards and has unique magical powers.'
-, 2001
-, 1
-, NULL
-, 3
-, 0.99
-, 152
-, 19.99
-,'PG'
-,'Trailers'
-,'2001-11-04'
-,'Harry Potter'
-, 1
-, NULL );
- 
--- Assign the last generated primary key value to the local variable.
-SET @sv_film_id := last_insert_id();
- 
--- Insert 2nd film in sakila.film table with classic values clause.
-INSERT INTO film
-( title
-, description
-, release_year
-, language_id
-, original_language_id
-, rental_duration
-, rental_rate
-, length
-, replacement_cost
-, rating
-, special_features
-, last_update
-, series_name
-, series_number
-, prequel_id )
-VALUES
-('Harry Potter and the Chamber of Secrets'
-,'A film where Harry returning to Hogwarts, still famous and a hero, when strange things start to happen ... people are turning to stone and no-one knows what, or who, is doing it.'
-, 2002
-, 1
-, NULL
-, 3
-, 0.99
-, 160
-, 19.99
-,'PG'
-,'Trailers'
-,'2002-11-15'
-,'Harry Potter'
-, 2
-, @sv_film_id );
- 
--- Assign the last generated primary key value to the local variable.
-SET @sv_film_id := last_insert_id();
- 
--- Insert 3rd film in sakila.film table with classic values clause.
-INSERT INTO film
-( title
-, description
-, release_year
-, language_id
-, original_language_id
-, rental_duration
-, rental_rate
-, length
-, replacement_cost
-, rating
-, special_features
-, last_update
-, series_name
-, series_number
-, prequel_id )
-VALUES
-('Harry Potter and the Prisoner of Azkaban'
-,'A film where Harry, Ron, and Hermione return for their third year at Hogwarts and are forced to face escaped prisoner, Sirius Black.'
-, 2004
-, 1
-, NULL
-, 3
-, 0.99
-, 141
-, 19.99
-,'PG'
-,'Trailers'
-,'2004-06-04'
-,'Harry Potter'
-, 3
-, @sv_film_id );
- 
--- Assign the last generated primary key value to the local variable.
-SET @sv_film_id := last_insert_id();
- 
--- Insert 4th film in sakila.film table with classic values clause.
-INSERT INTO film
-( title
-, description
-, release_year
-, language_id
-, original_language_id
-, rental_duration
-, rental_rate
-, length
-, replacement_cost
-, rating
-, special_features
-, last_update
-, series_name
-, series_number
-, prequel_id )
-VALUES
-('Harry Potter and the Goblet of Fire'
-,'A film where where Harry Potter''s name emerges from the Goblet of Fire, and he becomes a competitor in a grueling battle for glory among three wizarding schools - the Triwizard Tournament.'
-, 2005
-, 1
-, NULL
-, 3
-, 0.99
-, 157
-, 19.99
-,'PG'
-,'Trailers'
-,'2005-11-18'
-,'Harry Potter'
-, 4
-, @sv_film_id );
- 
--- Assign the last generated primary key value to the local variable.
-SET @sv_film_id := last_insert_id();
- 
--- Insert 5th film in sakila.film table with classic values clause.
-INSERT INTO film
-( title
-, description
-, release_year
-, language_id
-, original_language_id
-, rental_duration
-, rental_rate
-, length
-, replacement_cost
-, rating
-, special_features
-, last_update
-, series_name
-, series_number
-, prequel_id )
-VALUES
-('Harry Potter and the Order of the Phoenix'
-,'A film where Lord Voldemort has returned, but the Ministry of Magic is doing everything it can to keep the wizarding world from knowing the truth.'
-, 2007
-, 1
-, NULL
-, 3
-, 0.99
-, 138
-, 19.99
-,'PG-13'
-,'Trailers'
-,'2007-07-12'
-,'Harry Potter'
-, 5
-, @sv_film_id );
- 
--- Assign the last generated primary key value to the local variable.
-SET @sv_film_id := last_insert_id();
- 
--- Insert 6th film in sakila.film table with classic values clause.
-INSERT INTO film
-( title
-, description
-, release_year
-, language_id
-, original_language_id
-, rental_duration
-, rental_rate
-, length
-, replacement_cost
-, rating
-, special_features
-, last_update
-, series_name
-, series_number
-, prequel_id )
-VALUES
-('Harry Potter and the Half Blood Prince'
-,'A film where Voldemort is tightening his grip on Hogwarts and it is no longer the safe haven it once was. Harry and Dumbledore work to find the key to unlock the Dark Lord''s defenses.'
-, 2009
-, 1
-, NULL
-, 3
-, 0.99
-, 153
-, 19.99
-,'PG'
-,'Trailers'
-,'2009-07-15'
-,'Harry Potter'
-, 6
-, @sv_film_id );
- 
--- Assign the last generated primary key value to the local variable.
-SET @sv_film_id := last_insert_id();
- 
--- Insert 7th film in sakila.film table with classic values clause.
-INSERT INTO film
-( title
-, description
-, release_year
-, language_id
-, original_language_id
-, rental_duration
-, rental_rate
-, length
-, replacement_cost
-, rating
-, special_features
-, last_update
-, series_name
-, series_number
-, prequel_id )
-VALUES
-('Harry Potter and the Deathly Hallows: Part 1'
-,'A film where Harry, Ron and Hermione set out on their perilous mission to track down and destroy the Horcruxes - the keys to Voldemort''s immortality.'
-, 2010
-, 1
-, NULL
-, 3
-, 0.99
-, 146
-, 19.99
-,'PG-13'
-,'Trailers'
-,'2010-11-19'
-,'Harry Potter'
-, 7
-, @sv_film_id );
- 
--- Assign the last generated primary key value to the local variable.
-SET @sv_film_id := last_insert_id();
- 
--- Insert 8th film in sakila.film table with classic values clause.
-INSERT INTO film
-( title
-, description
-, release_year
-, language_id
-, original_language_id
-, rental_duration
-, rental_rate
-, length
-, replacement_cost
-, rating
-, special_features
-, last_update
-, series_name
-, series_number
-, prequel_id )
-VALUES
-('Harry Potter and the Deathly Hallows: Part 2'
-,'A film where Harry, Ron and Hermione set out on their perilous mission to track down and destroy the Horcruxes - the keys to Voldemort''s immortality.'
-, 2011
-, 1
-, NULL
-, 3
-, 0.99
-, 130
-, 19.99
-,'PG-13'
-,'Trailers'
-,'2011-07-15'
-,'Harry Potter'
-, 8
-, @sv_film_id );
--- --------------------------------------------------
-
--- ---------------------------------------------------------------------------
-SELECT f.title AS film,
-	   IFNULL(
-			CASE
-            WHEN NOT f.film_id = fp.film_id
-            AND      f.prequel_id = fp.film_id THEN fp.title
-            END, 'None') AS prequel
-FROM film f LEFT JOIN film fp
-ON   f.prequel_id = fp.film_id
-WHERE f.series_name = 'Harry Potter'
-ORDER BY f.series_number;
+-- -------------------------------------------------------------------------- 
+-- 3. Write a query that retrieves all 202 data and include a column 
+--    that will contain the tot_sales value from the previous month.
+--    (Use LAG())
+--    Example Output:
+--    +---------+----------+-----------+------------------+
+--    | year_no | month_no | tot_sales | prev_month_sales |
+--    +---------+----------+-----------+------------------+
+--    |    2020 |        1 |     20347 |             NULL |
+--    |    2020 |        2 |     17434 |            20347 |
+--    |    2020 |        3 |     16225 |            17434 |
+--    |    2020 |        4 |     13853 |            16225 |
+--    |    2020 |        5 |     14589 |            13853 |
+--    |    2020 |        6 |     13248 |            14589 |
+--    |    2020 |        7 |      8728 |            13248 |
+--    |    2020 |        8 |      9378 |             8728 |
+--    |    2020 |        9 |     11467 |             9378 |
+--    |    2020 |       10 |     13842 |            11467 |
+--    |    2020 |       11 |     15742 |            13842 |
+--    |    2020 |       12 |     18636 |            15742 |
+--    +---------+----------+-----------+------------------+
+--    12 rows in set (0.00 sec)
+-- -------------------------------------------------------------------------- 
+SELECT year_no AS 'Year Number'
+,      month_no AS 'Month Number'
+,      tot_sales AS 'Total Sales'
+,      LAG(tot_sales) OVER (ORDER BY month_no) AS 'Previous Month Sales'
+FROM   sales_fact
+WHERE  year_no = 2020;

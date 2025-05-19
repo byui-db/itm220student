@@ -2,61 +2,34 @@
 -- You have been hired by BYU-I Air to help sort through the airportdb database. 
 -- Each week you will receive a file from your manager with questions that 
 -- need answered by writing queries against the database. 
--- This week your manager wants you to understand the possibilities of using aggregate functions. 
+-- This week your manager wants you to understand what views and CTE expressions are. 
 
 -- week 11 questions
 USE airportdb;
 
--- ---------------------------------------------------------------------------
--- 1. What are the earliest and latest flights within the U.K.?
---    How many months of data do we have for those flights?
---    Order by the 'To' column.
---    The columns should look like the following:
---    | Earliest Departure | Latest Departure | Number of Months | From | To |
--- ---------------------------------------------------------------------------
-
-
 -- ---------------------------------------------------------------------------------
--- 2. What is the total number of passengers that are on a flight
---    within the U.K.?
---    Order by the 'To' column.
+-- 1. Create a view from week 10 question 1 named passengerrewards_view. 
+--    Make a table based on that view named `passengerrewards`. 
+--    Provide a select statement that queries the table.
+--    DO NOT use a select * statement.
 --    The columns should look like the following:
---    | Total Number of Passengers | From | To | Departure Date | Flight Number |
--- --------------------------------------------------------------------------------
-
-
--- ---------------------------------------------------------------------------------
--- 3. What is the total revenue generated from flights within the U.K.?
---    Format the revenue with a dollar sign, comma at the thousands place and
---    rounded to 2 decimal places.
---    The columns should look like the following:
---    | Total Revenue | From | To | Flight Number |
+--    | Status | Number of Flights | First Name | Last Name | Departure Month |
 -- ---------------------------------------------------------------------------------
 
 
--- ---------------------------------------------------------------------------------
--- 4. What is the average revenue above $250 generated from flights within the U.K.?
---    Format the revenue with a dollar sign, comma at the thousands place and
---    rounded to 2 decimal places.
---    The columns should look like the following:
---    | Average Revenue | From | To | Flight Number |
--- ---------------------------------------------------------------------------------
+-- --------------------------------------------------------------------------------------------------------
+-- 2. What are the top 10 airports that handled the highest number of outbound flights in August?
+--    Write a CTE statement called `flight_counts` to find the answer.
+--    Columns will look like the following:
+--    | Airport | Flight Count |
+-- --------------------------------------------------------------------------------------------------------
 
 
--- ---------------------------------------------------------------------------------------------------------
--- 5. List the number of passengers each flight serviced within the U.S.
---    Sort by total number of passengers from greatest to least
---    The activity column consists of a case statement with the
---    following conditions:
---    - If 10,000 or more, state "High Activity"
---    - If between 5,000 and 10,000, state "Moderate Activity"
---    - If between 1,000 and 5,000, state "Low Activity"
---    - If less than 1,000, state "Very Low Activity"
---    Add the total revenue generated from each flight and average cost per passenger
---    formatted with the following:
---    - Dollar sign
---    - Comma at the thousands place
---    - Rounded to 2 decimal places
---    The columns should look like the following:
---    | Flight Number | From | To | Activity | Number of Passengers | Total Revenue | Average Revenue |
--- ---------------------------------------------------------------------------------------------------------
+-- --------------------------------------------------------------------------------------------------------
+-- 3. What are the top 5 longest flights by duration for each airline?
+--    Don't include any duplicates.
+--    Sort the results by airline name and rank.
+--    Write a CTE statement called `ranked_flights` to find the answer.
+--    Columns will look like the following:
+--    | Airline | Flight Number | Origin Airport | Destination Airport | Flight Duration (Minutes) |
+-- --------------------------------------------------------------------------------------------------------

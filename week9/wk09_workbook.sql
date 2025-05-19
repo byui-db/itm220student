@@ -1,6 +1,8 @@
 -- *********************************
 -- W09 STUDENT SQL WORKBOOK
--- Chapter 11 questions
+-- Chapter 5 questions
+-- DO NOT RUN THIS FILE ALL AT ONCE
+-- USE CTRL(OR CMD) + ENTER TO RUN ONE QUESTION AT A TIME
 -- *********************************
 
 /*
@@ -8,9 +10,9 @@
     ,          Function(column_name_2) AS 'Alias2'
     ,          CASE column_name_3
                 WHEN condition THEN # ELSE # (Condition is usually a number or string value. Can also contain calculations)
-               END AS 'Alias 3' -- ALWAYS use an alias with CASE contitions
+              END AS 'Alias 3' -- ALWAYS use an alias with CASE contitions
     FROM       table1 t1   -- t1 and t2 are table aliases
-    INNER JOIN table2 t2   
+    JOIN       table2 t2   -- join types: INNER, LEFT, RIGHT
     ON         t1.table1_id = t2.table1_id -- PK and FK might not always be the same name
     WHERE      column_name = condition
     ORDER BY   column_name (DESC)
@@ -18,368 +20,362 @@
     To remember this: Stay Firm (JOINED) With Our Lord
 */
 
-/*
-    The CASE clause is the "IF" statement of SQL. 
-    It allows us to match conditions and set results based on the condition met.
-    This is useful for the following reasons:
-        * In one column we can have a different result returned based on the condition
-        * We can manipulate the output from the data to display relevant information
-
-        Example: A boolean field in SQL is stored as a TINYINT. This causes it to be
-        stored as a 1 or a 0. Using a case statement we can have the query state the
-        words 'TRUE' or 'FALSE' based on if the result is 1 or 0.
-
-        Example Query:
-        --
-        This query checks to see if the customer is active or not,
-        then it orders by their active state, then last name
-        --
-        SELECT  c.customer_id
-        ,       CONCAT(c.first_name, ' ', c.last_name) AS customer_name
-        ,       CASE 
-                WHEN c.active = 1 THEN 'Active'
-                ELSE 'Inactive'
-                END AS status
-        FROM    customer c
-        ORDER BY c.active DESC, c.last_name;
-
-*/
 
 USE sakila;
 
--- ---------------------------------------------------------------------------
--- 1. Rewrite the following query, which uses a simple CASE expression, 
--- so that the same results are achieved using a searched CASE expression. 
--- Try to use as few WHEN clauses as possible.
-SELECT  name
-,       CASE name
-            WHEN 'English'  THEN 'latin1'
-            WHEN 'Italian'  THEN 'latin1'
-            WHEN 'French'   THEN 'latin1'
-            WHEN 'German'   THEN 'latin1'
-            WHEN 'Japanese' THEN 'utf8'
-            WHEN 'Mandarin' THEN 'utf8'
-            ELSE 'UNKNOWN'
-        END AS character_set
-FROM    language;
+-- --------------------------------------------------------------------------
+-- 1. Fill in the blanks (denoted by <#>) for the following query 
+-- to obtain the results that follow
 
--- It should return:
+-- SELECT   c.first_name, c.last_name, a.address, ct.city
+-- FROM     customer c INNER JOIN address <1>
+-- ON       c.address_id = a.address_id INNER JOIN city ct
+-- ON       a.city_id = <2>
+-- WHERE    a.district = 'California';
 
--- +----------+---------------+
--- | name     | character_set |
--- +----------+---------------+
--- | English  | latin1        |
--- | Italian  | latin1        |
--- | Japanese | utf8          |
--- | Mandarin | utf8          |
--- | French   | latin1        |
--- | German   | latin1        |
--- +----------+---------------+
--- 6 rows in set (0.38 sec)
--- ---------------------------------------------------------------------------
-SELECT name,
-	CASE
-		WHEN name IN ('English','Italian','French','German')
-        THEN 'latin1'
-        WHEN name IN ('Japanese','Mandarin')
-        THEN 'utf8'
-        ELSE 'unknown'
-	END AS character_set
-FROM language;
+-- +------------+-----------+------------------------+----------------+
+-- | first_name | last_name | address                | city           |
+-- +------------+-----------+------------------------+----------------+
+-- | PATRICIA   | JOHNSON   | 1121 Loja Avenue       | San Bernardino |
+-- | BETTY      | WHITE     | 770 Bydgoszcz Avenue   | Citrus Heights |
+-- | ALICE      | STEWART   | 1135 Izumisano Parkway | Fontana        |
+-- | ROSA       | REYNOLDS  | 793 Cam Ranh Avenue    | Lancaster      |
+-- | RENEE      | LANE      | 533 al-Ayn Boulevard   | Compton        |
+-- | KRISTIN    | JOHNSTON  | 226 Brest Manor        | Sunnyvale      |
+-- | CASSANDRA  | WALTERS   | 920 Kumbakonam Loop    | Salinas        |
+-- | JACOB      | LANCE     | 1866 al-Qatif Avenue   | El Monte       |
+-- | RENE       | MCALISTER | 1895 Zhezqazghan Drive | Garden Grove   |
+-- +------------+-----------+------------------------+----------------+
+-- --------------------------------------------------------------------------
+SELECT   c.first_name
+,        c.last_name
+,        a.address
+,        ct.city
+FROM     customer c 
+INNER JOIN address a
+ON       c.address_id = a.address_id 
+INNER JOIN city ct
+ON       a.city_id = ct.city_id
+WHERE    a.district = 'California';
 
--- ---------------------------------------------------------------------------
--- 2. Rewrite the following query so that the result set contains 
--- a single row with five columns (one for each rating). 
--- Name the five columns (G, PG, PG_13, R, and NC_17).
-SELECT   rating
-,        COUNT(*)
-FROM     film
-GROUP BY rating;
+-- --------------------------------------------------------------------------
+-- 2. Construct a query that returns all addresses from the address table 
+-- that are in the same city but different addresses. 
+-- The SELECT-list should display the two addresses and the city name.
 
--- It retrieves:
+-- For example, you should return one copy of the address column 
+-- from two copies of the address table. 
+-- You can do that by using a column alias of addr1 and addr2 for 
+-- the two copies of the address column returned in the SELECT-list.
 
--- +--------+----------+
--- | rating | COUNT(*) |
--- +--------+----------+
--- | PG     |      209 |
--- | G      |      178 |
--- | NC-17  |      210 |
--- | PG-13  |      232 |
--- | R      |      195 |
--- +--------+----------+
--- 5 rows in set (0.54 sec)
+-- You need to join the two copies of the address table on the 
+-- city_id foreign key column that links them to the city table. 
+-- Then, you need to join on one copy of the address table using
+--  city_id foreign key column to the city_id primary key column 
+-- in the city table.
 
--- The modified query should return the following:
+-- The result set returns the eight rows below. 
+-- It contains two copies of the different addresses; 
+-- one row will have the frist address on the left and 
+-- second address on the right, and the other row will have 
+-- the address displayed in opposite columns.
 
--- +------+------+-------+------+-------+
--- | G    | PG   | PG-13 | R    | NC-17 |
--- +------+------+-------+------+-------+
--- |  178 |  199 |   226 |  195 |   210 |
--- +------+------+-------+------+-------+
--- 1 row in set (0.00 sec)
--- ---------------------------------------------------------------------------
-SELECT
-	SUM(CASE WHEN rating = 'G' THEN 1 ELSE 0 END) AS 'G'
-,   SUM(CASE WHEN rating = 'PG' THEN 1 ELSE 0 END) AS 'PG'
-,   SUM(CASE WHEN rating = 'PG-13' THEN 1 ELSE 0 END) AS 'PG-13'
-,   SUM(CASE WHEN rating = 'R' THEN 1 ELSE 0 END) AS 'R'
-,   SUM(CASE WHEN rating = 'NC-17' THEN 1 ELSE 0 END) AS 'NC-17'
-FROM film;
+-- +----------------------+----------------------+------------+
+-- | addr1                | addr2                | city       |
+-- +----------------------+----------------------+------------+
+-- | 47 MySakila Drive    | 23 Workhaven Lane    | Lethbridge |
+-- | 28 MySQL Boulevard   | 1411 Lillydale Drive | Woodridge  |
+-- | 23 Workhaven Lane    | 47 MySakila Drive    | Lethbridge |
+-- | 1411 Lillydale Drive | 28 MySQL Boulevard   | Woodridge  |
+-- | 1497 Yuzhou Drive    | 548 Uruapan Street   | London     |
+-- | 587 Benguela Manor   | 43 Vilnius Manor     | Aurora     |
+-- | 548 Uruapan Street   | 1497 Yuzhou Drive    | London     |
+-- | 43 Vilnius Manor     | 587 Benguela Manor   | Aurora     |
+-- +----------------------+----------------------+------------+
+-- --------------------------------------------------------------------------
+SELECT a1.address AS addr1
+,      a2.address AS addr2
+,      c.city
+FROM   address a1
+INNER JOIN address a2
+ON     a1.city_id = a2.city_id
+INNER JOIN city c
+ON     a1.city_id = c.city_id
+WHERE NOT a1.address = a2.address;
 
--- ---------------------------------------------------------------------------
--- 3. Write a query that returns the alphabetized first letter 
--- of the customer's last name and the count of active and inactive customers. 
--- Limit the results to only those first letters that occur in the 
--- last_name column of the customer table.
+-- --------------------------------------------------------------------------
+-- 3. Write a query that shows all the films starring Joe Swank 
+-- that have a length between 90 and 120 minutes. 
+-- You will use the actor, film_actor and film tables 
+-- to answer this question. 
+-- It should display the following data set:
+-- +----------------------+--------+
+-- | title                | length |
+-- +----------------------+--------+
+-- | CHOCOLAT HARRY       |    101 |
+-- | DALMATIONS SWEDEN    |    106 |
+-- | PERDITION FARGO      |     99 |
+-- | RUNNER MADIGAN       |    101 |
+-- | SWEETHEARTS SUSPECTS |    108 |
+-- | TIES HUNGER          |    111 |
+-- | UNTOUCHABLES SUNRISE |    120 |
+-- +----------------------+--------+
+-- --------------------------------------------------------------------------
+SELECT f.title
+,      f.length
+FROM   film f
+INNER JOIN film_actor fa
+ON     f.film_id = fa.film_id
+INNER JOIN actor a
+ON     fa.actor_id = a.actor_id
+WHERE  f.length BETWEEN 90 AND 120
+AND    CONCAT(a.first_name, ' ', a.last_name) = 'Joe Swank';
 
--- Label the columns as follows:
+-- Week 6 questions
 
--- starts_with is the first column and the first letter of the customer's last_name.
+-- --------------------------------------------------------------------------
+-- 4. Write a compound query that finds the 
+-- first and last names of all actors and customers 
+-- whose last name starts with L, sorted by last_name.
+-- This should return the following result set:
+-- +------------+--------------+
+-- | first_name | last_name    |
+-- +------------+--------------+
+-- | MISTY      | LAMBERT      |
+-- | JACOB      | LANCE        |
+-- | RENEE      | LANE         |
+-- | HEIDI      | LARSON       |
+-- | DARYL      | LARUE        |
+-- | LAURIE     | LAWRENCE     |
+-- | JEANNE     | LAWSON       |
+-- | LAWRENCE   | LAWTON       |
+-- | KIMBERLY   | LEE          |
+-- | MATTHEW    | LEIGH        |
+-- | LOUIS      | LEONE        |
+-- | SARAH      | LEWIS        |
+-- | GEORGE     | LINTON       |
+-- | MAUREEN    | LITTLE       |
+-- | JOHNNY     | LOLLOBRIGIDA |
+-- | DWIGHT     | LOMBARDI     |
+-- | JACQUELINE | LONG         |
+-- | AMY        | LOPEZ        |
+-- | BARRY      | LOVELACE     |
+-- | PRISCILLA  | LOWE         |
+-- | VELMA      | LUCAS        |
+-- | WILLARD    | LUMPKIN      |
+-- | LEWIS      | LYMAN        |
+-- | JACKIE     | LYNCH        |
+-- +------------+--------------+
+-- --------------------------------------------------------------------------
+SELECT * FROM
+(SELECT a.first_name
+,       a.last_name
+FROM    actor a
+UNION
+SELECT  c.first_name
+,       c.last_name
+FROM    customer c) A
+WHERE last_name LIKE 'L%'
+ORDER BY last_name;
 
--- active_count is the second column and the count of active customers 
---              (as defined in the textbook examples of Chapter 11).
+-- --------------------------------------------------------------------------
+-- 5. Write a compound query that finds the id and name of all cities 
+-- and countries that have a name starting with 
+-- an 'S', containing an 'o', and ending with an 'a' 
+-- in descending order by city name.
+-- +-----+----------------------------+
+-- | id  | name                       |
+-- +-----+----------------------------+
+-- | 450 | San Felipe de Puerto Plata |
+-- | 458 | Santa Rosa                 |
+-- | 459 | Santiago de Compostela     |
+-- | 473 | Shimoga                    |
+-- | 489 | Songkhla                   |
+-- | 490 | Sorocaba                   |
+-- | 495 | Southend-on-Sea            |
+-- | 498 | Stara Zagora               |
+-- |  84 | Slovakia                   |
+-- |  85 | South Africa               |
+-- |  86 | South Korea                |
+-- +-----+----------------------------+
+-- --------------------------------------------------------------------------
+SELECT ct.city_id AS id
+,      ct.city AS name
+FROM   city ct
+WHERE  ct.city LIKE 'S%o%a'
+UNION ALL
+SELECT c.country_id AS id
+,      c.country AS name
+FROM   country c
+WHERE  c.country LIKE 'S%o%a'
+ORDER BY name DESC;
 
--- inactive_count is the third column and the count of inactive customers 
---                (as defined in the textbook examples of Chapter 11).
+-- --------------------------------------------------------------------------
+-- 6. Write a compound query that finds the distinct last_name and title 
+-- where the first_name starts with an 'M' and the film starts with 'LOVE' 
+-- and the last_name and title where the last_name starts with an 'W' 
+-- and the film title starts with 'LIFE' 
+-- in ascending order by the actor's last_name.
+-- +-------------+-----------+------------------+
+-- | first_name  | last_name | title            |
+-- +-------------+-----------+------------------+
+-- | MENA        | HOPPER    | LOVER TRUMAN     |
+-- | MARY        | KEITEL    | LOVELY JINGLE    |
+-- | MILLA       | KEITEL    | LOVER TRUMAN     |
+-- | MINNIE      | KILMER    | LOVELY JINGLE    |
+-- | MORGAN      | MCDORMAND | LOVERBOY ATTACKS |
+-- | DARYL       | WAHLBERG  | LIFE TWISTED     |
+-- | CHRISTOPHER | WEST      | LIFE TWISTED     |
+-- | REESE       | WEST      | LIFE TWISTED     |
+-- | UMA         | WOOD      | LIFE TWISTED     |
+-- +-------------+-----------+------------------+
+-- --------------------------------------------------------------------------
+SELECT a.last_name
+,      f.title
+FROM   actor a INNER JOIN film_actor fa
+ON     a.actor_id = fa.actor_id INNER JOIN film f
+ON     fa.film_id = f.film_id
+WHERE  a.first_name LIKE 'M%'
+AND    f.title LIKE 'LOVE%'
+UNION
+SELECT a.last_name
+,      f.title
+FROM   actor a INNER JOIN film_actor fa
+ON     a.actor_id = fa.actor_id INNER JOIN film f
+ON     fa.film_id = f.film_id
+WHERE  a.last_name LIKE 'W%'
+AND    f.title LIKE 'LIFE%'
+ORDER BY last_name;
 
--- The output should look like the following:
+-- Chapter 10 questions
 
--- +-------------+--------------+----------------+
--- | starts_with | active_count | inactive_count |
--- +-------------+--------------+----------------+
--- | A           |           18 |              2 |
--- | B           |           55 |              0 |
--- | C           |           49 |              3 |
--- | D           |           17 |              0 |
--- | E           |           11 |              2 |
--- | F           |           25 |              0 |
--- | G           |           42 |              1 |
--- | H           |           49 |              0 |
--- | I           |            3 |              0 |
--- | J           |           13 |              1 |
--- | K           |           13 |              0 |
--- | L           |           21 |              1 |
--- | M           |           57 |              2 |
--- | N           |           10 |              1 |
--- | O           |           10 |              0 |
--- | P           |           28 |              0 |
--- | Q           |            3 |              0 |
--- | R           |           38 |              2 |
--- | S           |           54 |              0 |
--- | T           |           20 |              0 |
--- | V           |            7 |              0 |
--- | W           |           37 |              1 |
--- | Y           |            3 |              0 |
--- +-------------+--------------+----------------+
--- 23 rows in set (0.00 sec)
--- ---------------------------------------------------------------------------
-SELECT SUBSTRING(last_name, 1,1) AS starts_with
-,      SUM(CASE WHEN active = 1 THEN 1 ELSE 0 END) AS active_count
-,      SUM(CASE WHEN active = 0 THEN 1 ELSE 0 END) AS inactive_count
-FROM   customer
-GROUP BY SUBSTRING(last_name, 1,1)
-ORDER BY SUBSTRING(last_name, 1,1);
+-- NOTE: This section uses subqueries. We will touch on these in week 12.
 
--- ---------------------------------------------------------------------------
--- 4. Write a query that returns the alphabetized first letter 
--- of the customer's last name and the count of active and inactive customers.
--- DO NOT limit the results to only those first letters that occur 
--- in the last_name column of the customer table but 
--- return results that include any missing letters from the data set. 
--- (HINT: You will need to fabricate a table composed of the 26 letters 
--- of the alphabet and use an outer join to resolve this problem.)
+-- --------------------------------------------------------------------------
+-- 7. Using the following table definitions and data, write a query 
+-- that returns each customer name along with their total payments 
+-- (these names differ from the textbook because 
+-- they're the ones in the sakila database):
 
--- Label the columns as follows:
+-- customer Table:
 
--- starts_with is the first column and the first letter of the customer's last_name.
+-- +-------------+---------------+
+-- | customer_id | name          |
+-- +-------------+---------------+
+-- |           1 | MARY SMITH    |
+-- |           4 | BARBARA JONES |
+-- |         210 | ELLA OLIVER   |
+-- +-------------+---------------+
+-- 3 rows in set (0.30 sec)
 
--- active_count is the second column and the count of active customers 
---              (as defined in the textbook examples of Chapter 11).
--- inactive_count is the third column and the count of inactive customers 
---                (as defined in the textbook examples of Chapter 11).
+-- payment Table:
 
--- The output should look like the following:
+-- +------------+-------------+--------+
+-- | payment_id | customer_id | amount |
+-- +------------+-------------+--------+
+-- |          1 |          32 | 118.68 |
+-- |          4 |          22 |  81.78 |
+-- |        210 |          31 | 137.69 |
+-- +------------+-------------+--------+
+-- 3 rows in set (0.02 sec)
 
--- +-------------+--------------+----------------+
--- | starts_with | active_count | inactive_count |
--- +-------------+--------------+----------------+
--- | A           |           18 |              2 |
--- | B           |           55 |              0 |
--- | C           |           49 |              3 |
--- | D           |           17 |              0 |
--- | E           |           11 |              2 |
--- | F           |           25 |              0 |
--- | G           |           42 |              1 |
--- | H           |           49 |              0 |
--- | I           |            3 |              0 |
--- | J           |           13 |              1 |
--- | K           |           13 |              0 |
--- | L           |           21 |              1 |
--- | M           |           57 |              2 |
--- | N           |           10 |              1 |
--- | O           |           10 |              0 |
--- | P           |           28 |              0 |
--- | Q           |            3 |              0 |
--- | R           |           38 |              2 |
--- | S           |           54 |              0 |
--- | T           |           20 |              0 |
--- | U           |            0 |              0 |
--- | V           |            7 |              0 |
--- | W           |           37 |              1 |
--- | X           |            0 |              0 |
--- | Y           |            3 |              0 |
--- | Z           |            0 |              0 |
--- +-------------+--------------+----------------+
--- 26 rows in set (0.00 sec)
--- ---------------------------------------------------------------------------
-WITH letters AS
-(SELECT 'A' AS letter
- UNION ALL
- SELECT 'B' AS letter
- UNION ALL
- SELECT 'C' AS letter
- UNION ALL
- SELECT 'D' AS letter
- UNION ALL
- SELECT 'E' AS letter
- UNION ALL
- SELECT 'F' AS letter
- UNION ALL
- SELECT 'G' AS letter
- UNION ALL
- SELECT 'H' AS letter
- UNION ALL
- SELECT 'I' AS letter
- UNION ALL
- SELECT 'J' AS letter
- UNION ALL
- SELECT 'K' AS letter
- UNION ALL
- SELECT 'L' AS letter
- UNION ALL
- SELECT 'M' AS letter
- UNION ALL
- SELECT 'N' AS letter
- UNION ALL
- SELECT 'O' AS letter
- UNION ALL
- SELECT 'P' AS letter
- UNION ALL
- SELECT 'Q' AS letter
- UNION ALL
- SELECT 'R' AS letter
- UNION ALL
- SELECT 'S' AS letter
- UNION ALL
- SELECT 'T' AS letter
- UNION ALL
- SELECT 'U' AS letter
- UNION ALL
- SELECT 'V' AS letter
- UNION ALL
- SELECT 'W' AS letter
- UNION ALL
- SELECT 'X' AS letter
- UNION ALL
- SELECT 'Y' AS letter
- UNION ALL
- SELECT 'Z' AS letter)
-SELECT l.letter AS starts_with
-,	   SUM(CASE WHEN active = 1 THEN 1 ELSE 0 END) AS active_count
-,      SUM(CASE WHEN active = 0 THEN 1 ELSE 0 END) AS inactive_count
-FROM   customer c RIGHT JOIN letters l
-ON     SUBSTR(c.last_name,1,1) = l.letter
-GROUP BY l.letter
-ORDER BY 1;
+-- Before you delete the rows from the payment table 
+-- for those related to Ella Oliver, you should backup the rows. 
+-- That way you can recover the rows after the query 
+-- without refreshing the sakila database.
 
--- ---------------------------------------------------------------------------
--- 5. Write a query that returns the alphabetized first letter 
--- of the customer's last name and the count of active and inactive customers 
--- for only those letters where the count of active customers is greater than 30.
+-- You need to create a payment_backup table, 
+-- which can be done with the following two commands:
 
--- Label the columns as follows:
+-- Conditionally drop the payment table.
+DROP TABLE IF EXISTS payment_backup;
 
--- starts_with is the first column and the first letter of the customer's last_name.
--- active_count is the second column and the count of active customers 
---              (as defined in the textbook examples of Chapter 11).
--- inactive_count is the third column and the count of inactive customers 
---                (as defined in the textbook examples of Chapter 11).
+-- Create the payment_backup table.
+CREATE TABLE payment_backup AS
+  SELECT payment_id
+  ,      customer_id
+  ,      staff_id
+  ,      rental_id
+  ,      amount
+  ,      payment_date
+  ,      last_update
+  FROM   payment
+  WHERE  customer_id = 
+          (SELECT customer_id
+           FROM   customer
+           WHERE  first_name = 'ELLA'
+           AND    last_name = 'OLIVER');
+-- Delete all rows for Ella Oliver in the payment table 
+-- with the following statement:
 
--- The output should look like the following:
+DELETE FROM payment
+WHERE customer_id = (SELECT customer_id
+                     FROM   customer 
+                     WHERE  first_name = 'ELLA' 
+                     AND    last_name = 'OLIVER');
+-- Include all the three customers identified 
+-- (Mary Smith, Barbara Jones, and Ella Oliver) 
+-- by using a LEFT OUTER JOIN between the customer and payment tables. 
+-- Display first_name, a white space, and last_name and 
+-- the total of payments made by each customer 
+-- while ordering the return set in ascending order. 
+-- You should display the following:
 
--- +-------------+--------------+----------------+
--- | starts_with | active_count | inactive_count |
--- +-------------+--------------+----------------+
--- | B           |           55 |              0 |
--- | C           |           49 |              3 |
--- | G           |           42 |              1 |
--- | H           |           49 |              0 |
--- | M           |           57 |              2 |
--- | R           |           38 |              2 |
--- | S           |           54 |              0 |
--- | W           |           37 |              1 |
--- +-------------+--------------+----------------+
--- 8 rows in set (0.00 sec)
--- ---------------------------------------------------------------------------
-SELECT SUBSTR(last_name, 1,1) AS starts_with
-,	   SUM(CASE WHEN active = 1 THEN 1 ELSE 0 END) AS active_count
-,      SUM(CASE WHEN active = 0 THEN 1 ELSE 0 END) AS inactive_count
-FROM   customer
-GROUP BY SUBSTR(last_name,1,1)
-HAVING SUM(CASE WHEN active = 1 THEN 1 ELSE 0 END) > 30
-ORDER BY 1;
+-- +---------------+---------------+
+-- | name          | Total Payment |
+-- +---------------+---------------+
+-- | BARBARA JONES |         81.78 |
+-- | ELLA OLIVER   |          NULL |
+-- | MARY SMITH    |        118.68 |
+-- +---------------+---------------+
+-- 3 rows in set (0.00 sec)
 
+-- --------------------------------------------------------------------------
+SELECT CONCAT(c.first_name, ' ', c.last_name) AS name
+,      SUM(p.amount) AS 'Total Payment'
+FROM   customer c LEFT JOIN payment p
+ON     c.customer_id = p.customer_id
+WHERE  c.customer_id IN (1,4,210)
+GROUP BY name
+ORDER BY name;
 
--- ----------------------------------
--- PRACTICE
--- ----------------------------------
+-- --------------------------------------------------------------------------
+-- 8. Reformulate your query from Exercise 10-1 to exclude Ella Oliver
 
--- ------------------------------------------------------------------------------------------
--- 1. List the titles of all films and classify them according to the following rules:
---    * If the length is less than 60 minutes, label them as 'Short'
---    * If the length is between 60 and 120 minutes, label them as 'Medium'
---    * If the length is greater than 120 minutes, label them as 'Long'
---    Sort by shortest film first.
---    Columns should look like the following:
---    | Title | Film_Length_Category |
--- ------------------------------------------------------------------------------------------
+-- It should return the following data:
+-- +---------------+---------------+
+-- | name          | Total Payment |
+-- +---------------+---------------+
+-- | BARBARA JONES |         81.78 |
+-- | MARY SMITH    |        118.68 |
+-- +---------------+---------------+
+-- --------------------------------------------------------------------------
+SELECT CONCAT(c.first_name, ' ', c.last_name) AS name
+,      SUM(p.amount) AS 'Total Payment'
+FROM   payment p RIGHT JOIN customer c
+ON     c.customer_id = p.customer_id
+WHERE  c.customer_id IN (1,4,210)
+GROUP BY name
+HAVING   SUM(p.amount) IS NOT NULL
+ORDER BY name;
 
+-- --------------------------------------------------------------------------
+-- After writing your script to generate the foregoing result sets (derived table), 
+-- you can recover the rows from the payment_backup table by inserting them 
+-- into the payment table with this script:
 
--- ------------------------------------------------------------------------------------------
--- 2. Create a list of customers and note indicating an 'Active' or 'Inactive' status.
---    Columns should look like the following:
---    | Customer Name | Status |
--- ------------------------------------------------------------------------------------------
-
-
--- ------------------------------------------------------------------------------------------
--- 3. Show the titles of all films. Include the rental_duration column too.
---    Add an additional column to classify the rental duration 
---    according to the following rules:
---    * If the rental_duration is less than 4 days, label it as 'Short Term'
---    * If the rental_duration is beween 4 and 7 days, label it as 'Standard Term'
---    * If the rental_duration is greater than 7 days, label it as 'Long Term'
---    Sort by longest duration first.
---    Columns should look like the following:
---    | Title | Rental Duration | Rental_Duration_Category |
--- ------------------------------------------------------------------------------------------
-
-
--- ------------------------------------------------------------------------------------------
--- 4. For each customer, calculate their total rental payment and classify them
---    according to the following rules:
---    * If the total payment is less than $50, label them as a 'Low Spender'
---    * If the total payment is between $50 and $100, label them as a 'Medium Spender'
---    * If the total payment is any higher, label them as a 'High Spender'
---    Note: This query requires a GROUP BY clause. This clause will be covered more in depth
---          in week 11. Here is the basic rule: Any column NOT in the SUM function goes
---          in the GROUP BY clause. For this question, the GROUP BY clause is formatted
---          like this:
---    GROUP BY c.customer_id
---    ,        CONCAT(first_name, ' ', last_name)
---    Sort by low spenders first. Format the total payment with a $ in front.
---    Columns will look like the following:
---    | Customer Name | Total Payment | Spending_Category |
--- ------------------------------------------------------------------------------------------
-
-
+INSERT INTO payment
+( payment_id
+, customer_id
+, staff_id
+, rental_id
+, amount
+, payment_date
+, last_update )
+( SELECT *
+  FROM   payment_backup
+  WHERE  customer_id = (SELECT customer_id
+                        FROM   customer 
+                        WHERE  first_name = 'ELLA' 
+                        AND    last_name = 'OLIVER'));
+-- --------------------------------------------------------------------------

@@ -2,54 +2,61 @@
 -- You have been hired by BYU-I Air to help sort through the airportdb database. 
 -- Each week you will receive a file from your manager with questions that 
 -- need answered by writing queries against the database. 
--- This week your manager wants you to understand left joins. 
+-- This week your manager wants you to understand the possibilities of using aggregate functions. 
 
 -- week 10 questions
 USE airportdb;
 
 -- ---------------------------------------------------------------------------
--- 1. Who are our frequent fliers that reside in the U.K. and have flown somewhere in the world from the U.K.?
-
---    a. Create a CASE statement with the following conditions:
---       Show passenger's status as 'Platinum', 'Gold', 'Silver', or 'No Status' based on the number of flights they have taken.
---       The conditions are as follows:
---       - Platinum: 30 or more flights
---       - Gold: 20 or more flights
---       - Silver: 10 or more flights
---       - No Status: Less than 10 flights
- 
---    b. Next, Count how many flights a passenger has flown and add that to your query.
- 
---    c. Show the first and last name of the passenger in separate columns
- 
---    d. Create one final CASE statement to display the name of the Departure Month.
---       - The months that exist in this dataset are: June, July, August, and September
- 
---    e. Filter your query to only show passengers that fall under these conditions:
---       - They are from the U.K. and their flight departs from the U.K.
---       - They have never flown but are from the U.K.
---       - They have never flown and their information is incomplete
- 
---    f. Sort by the number of flights from greatest to least
- 
---    g. Group by the last 3 columns in your select statement. 
---       The CASE statement can be referenced by its position in the select statement. 
---       In this case it would be 5.
+-- 1. What are the earliest and latest flights within the U.K.?
+--    How many months of data do we have for those flights?
+--    Order by the 'To' column.
 --    The columns should look like the following:
---    | Status | Number of Flights | First Name | Last Name | Departure Month |
+--    | Earliest Departure | Latest Departure | Number of Months | From | To |
 -- ---------------------------------------------------------------------------
 
 
--- --------------------------------------------------------------
--- 2. Who in the 'no status' section from the previous query
---    have never flown?
---    Columns will look like the following:
---    | Status | Number of Flights | First Name | Last Name | Departure Month |
--- --------------------------------------------------------------
+-- ---------------------------------------------------------------------------------
+-- 2. What is the total number of passengers that are on a flight
+--    within the U.K.?
+--    Order by the 'To' column.
+--    The columns should look like the following:
+--    | Total Number of Passengers | From | To | Departure Date | Flight Number |
+-- --------------------------------------------------------------------------------
 
 
--- --------------------------------------------------------------------------------
--- 3. Who has never flown and doesn't have any records in our
---    passenger details table?
---    | Status | Number of Flights | First Name | Last Name | Departure Month | Passenger Country |
--- --------------------------------------------------------------------------------
+-- ---------------------------------------------------------------------------------
+-- 3. What is the total revenue generated from flights within the U.K.?
+--    Format the revenue with a dollar sign, comma at the thousands place and
+--    rounded to 2 decimal places.
+--    The columns should look like the following:
+--    | Total Revenue | From | To | Flight Number |
+-- ---------------------------------------------------------------------------------
+
+
+-- ---------------------------------------------------------------------------------
+-- 4. What is the average revenue above $250 generated from flights within the U.K.?
+--    Format the revenue with a dollar sign, comma at the thousands place and
+--    rounded to 2 decimal places.
+--    The columns should look like the following:
+--    | Average Revenue | From | To | Flight Number |
+-- ---------------------------------------------------------------------------------
+
+
+-- ---------------------------------------------------------------------------------------------------------
+-- 5. List the number of passengers each flight serviced within the U.S.
+--    Sort by total number of passengers from greatest to least
+--    The activity column consists of a case statement with the
+--    following conditions:
+--    - If 10,000 or more, state "High Activity"
+--    - If between 5,000 and 10,000, state "Moderate Activity"
+--    - If between 1,000 and 5,000, state "Low Activity"
+--    - If less than 1,000, state "Very Low Activity"
+--    Add the total revenue generated from each flight and average cost per passenger
+--    formatted with the following:
+--    - Dollar sign
+--    - Comma at the thousands place
+--    - Rounded to 2 decimal places
+--    The columns should look like the following:
+--    | Flight Number | From | To | Activity | Number of Passengers | Total Revenue | Average Revenue |
+-- ---------------------------------------------------------------------------------------------------------

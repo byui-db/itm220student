@@ -2,61 +2,51 @@
 -- You have been hired by BYU-I Air to help sort through the airportdb database. 
 -- Each week you will receive a file from your manager with questions that 
 -- need answered by writing queries against the database. 
--- This week your manager wants you to get familiar with functions. 
+-- This week your manager wants you to understand case statements. 
 
 -- week 8 questions
 USE airportdb;
 
--- -------------------------------------------------------------------------
--- 1. Put the first and last names of the passengers together.
---    Only show passengers with a single letter as their last name.
---    Your columns will look like the following:
---    | Passenger Name |
--- -------------------------------------------------------------------------
+-- ---------------------------------------------------------------------------
+-- 1. What are the flight details for flight AL9073 (flight id #93)?
+--    Format the dates to look like: Jun 01, 2015 07:56 AM
+--    The From and To columns should display the city and country together.
+--    The columns should look like the following:
+--    | Flight Number | From | To | Departure Date | Arrival Date |
+-- ---------------------------------------------------------------------------
 
 
--- -------------------------------------------------------------------------
--- 2. Locate all passenger names with the letter X in their last name that
---    end in XX. Can use LIKE or REGEXP.
---    Your columns will look like the following:
---    | Passenger Name |
--- -------------------------------------------------------------------------
+-- ---------------------------------------------------------------------------
+-- 2. How many passengers are on flight AL9073 (flight id #93)?
+--    Tell me whether or not the flight is full.
+--    Code an example with seats available and when it is full
+--    This should be done in one query.
+--    A `group by` clause shouldn't be used.
+--    The columns should look like the following:
+--    | Flight Number | From | To | Plane Capacity | Original # of Passengers | Seats Remaining | Full Flight # of Passengers | Seats Remaining |
+-- ---------------------------------------------------------------------------
 
 
--- -------------------------------------------------------------------------
--- 3. Find the airplane type that contains '747' in the identifier.
---    Print the first 15 characters of the description.
---    Hint: (Use the substring and locate functions)
---    Your columns will look like the following:
---    | Airplane Identifier | Airplane Description |
--- -------------------------------------------------------------------------
+-- -------------------------------------------------------------------------------------
+-- 3. How many flights are on each day that are contained within the U.S.?
+--    These flights depart from a city in the U.S. and arrives at a U.S. city
+--    Also display the total amount of flights at the end
+--    The columns should look like the following:
+--    | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday | Total |
+-- -------------------------------------------------------------------------------------
 
 
--- -------------------------------------------------------------------------------------------------
--- 4. List what each passenger paid for their seat on flight number: AF1837
---    on June 1st, 2015. Show the original price, round the price to the nearest dollar, and floor it.
---    Add a $ sign to all prices.
---    Sort prices from lowest to highest.
---    Format the dates to look like: Feb 28, 2015 3:00:00 PM
---    Columns will look like the following:
---    | Flight Number | Departure Date | Passenger Name | Price | Rounded Price | Floored Price |
--- -------------------------------------------------------------------------------------------------
+-- ---------------------------------------------------------------------------
+--    YOU MAY NEED TO RUN THIS QUERY FROM THE TERMINAL TO VERIFY THAT IT WORKS
+-- 4. List the number of passengers each flight serviced within the U.S.
+--    Sort by total number of passengers from greatest to least
+--    The activity column consists of a case statement with the
+--    following conditions:
+--    - If 10,000 or more, state "High Activity"
+--    - If between 5,000 and 10,000, state "Moderate Activity"
+--    - If between 1,000 and 5,000, state "Low Activity"
+--    - If less than 1,000, state "Very Low Activity"
+--    The columns should look like the following:
+--    | Flight Number | From | To | Activity | Number of Passengers |
+-- ---------------------------------------------------------------------------
 
-
--- -------------------------------------------------------------------------------------------------
--- 5. Find all flights that have a duration of 20 hours or more. 
---    Show hours, how many days and how many years since the flight (Use FLOOR).
---    Sort them by longest flight first.
---    Format the dates to look like: Feb 28, 2015 3:00:00 PM
---    Limit to 10 results.
---    Columns will look like the following:
---    | Departure Date | Arrival Date | Duration in Hours | Duration in Days | Years Since Flight |
--- -------------------------------------------------------------------------------------------------
-
-
--- -------------------------------------------------------------------------
--- 6. Assign a row number to each passenger for flight number: AL9073.
---    The flight_id is 93.
---    Your columns will look like the following:
---    | Flight Number | Passenger Name | Row Number |
--- -------------------------------------------------------------------------

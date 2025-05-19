@@ -1,35 +1,35 @@
--- Background:
+-- Background:(Extra Credit)
 -- You have been hired by BYU-I Air to help sort through the airportdb database. 
 -- Each week you will receive a file from your manager with questions that 
 -- need answered by writing queries against the database. 
--- This week your manager wants you to understand what views and CTE expressions are. 
-
--- week 12 questions
+-- This week your manager wants you to understand what windowing functions are. 
+-- One point for a CTE or Subquery version of the query, Two points for both. 
+-- Cannot use AI to convert one to the other for points.
+-- Cannot use AI for a complete solution.
+-- Appropriate use of AI is having it teach you about the concepts and then you write the queries.
 USE airportdb;
 
 -- ---------------------------------------------------------------------------------
--- 1. Create a view from week 10 question 1 named passengerrewards_view. 
---    Make a table based on that view named `passengerrewards`. 
---    Provide a select statement that queries the table.
---    DO NOT use a select * statement.
---    The columns should look like the following:
---    | Status | Number of Flights | First Name | Last Name | Departure Month |
+-- 1. What are the top 10 airlines by customer activity? (number of customers served)
 -- ---------------------------------------------------------------------------------
 
 
 -- --------------------------------------------------------------------------------------------------------
--- 2. What are the top 10 airports that handled the highest number of outbound flights in August?
---    Write a CTE statement called `flight_counts` to find the answer.
---    Columns will look like the following:
---    | Airport | Flight Count |
+-- 2. What are the top 10 airlines by revenue?
 -- --------------------------------------------------------------------------------------------------------
 
 
 -- --------------------------------------------------------------------------------------------------------
--- 3. What are the top 5 longest flights by duration for each airline?
---    Don't include any duplicates.
---    Sort the results by airline name and rank.
---    Write a CTE statement called `ranked_flights` to find the answer.
---    Columns will look like the following:
---    | Airline | Flight Number | Origin Airport | Destination Airport | Flight Duration (Minutes) |
+-- 3. Which airlines are on both lists?
+-- --------------------------------------------------------------------------------------------------------
+
+
+-- --------------------------------------------------------------------------------------------------------
+-- 4. Compare the top 10 airlines by revenue vs the 11 – 20 airlines by revenue. How big of a gap is there?
+-- --------------------------------------------------------------------------------------------------------
+
+
+-- --------------------------------------------------------------------------------------------------------
+-- 5. Compare the top 20 airlines by revenue. Compare the 1st to the  2nd, the 2nd to the 3rd, and so on.
+-- How big of a gap is there?
 -- --------------------------------------------------------------------------------------------------------
