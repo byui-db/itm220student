@@ -9,15 +9,15 @@ USE airportdb;
 
 -- -------------------------------------------------------------------------
 -- 1. Put the first and last names of the passengers together.
---    Only show passengers with a single letter as their last name.
+--    Only show passengers that have a single letter as their last name.
 --    Your columns will look like the following:
 --    | Passenger Name |
 -- -------------------------------------------------------------------------
 
 
 -- -------------------------------------------------------------------------
--- 2. Locate all passenger names with the letter X in their last name that
---    end in XX. Can use LIKE or REGEXP.
+-- 2. Locate all passenger names with their last name ending in XX.
+--    Can use LIKE or REGEXP.
 --    Your columns will look like the following:
 --    | Passenger Name |
 -- -------------------------------------------------------------------------
@@ -44,8 +44,9 @@ USE airportdb;
 
 
 -- -------------------------------------------------------------------------------------------------
--- 5. Find all flights that have a duration of 20 hours or more. 
---    Show hours, how many days and how many years since the flight (Use FLOOR).
+-- 5. Find all flights that have a duration greater than 20 hours. 
+--    Show hours, how many days (Use DATEDIFF) 
+--    and how many years since the flight (Use FLOOR on the year column).
 --    Sort them by longest flight first.
 --    Format the dates to look like: Feb 28, 2015 3:00:00 PM
 --    Limit to 10 results.

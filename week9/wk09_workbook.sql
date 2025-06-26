@@ -3,6 +3,7 @@
 -- Chapter 5 questions
 -- DO NOT RUN THIS FILE ALL AT ONCE
 -- USE CTRL(OR CMD) + ENTER TO RUN ONE QUESTION AT A TIME
+-- Joins Continued, all other join types
 -- *********************************
 
 /*

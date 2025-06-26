@@ -105,7 +105,6 @@ VALUES
 , '978-3-16-148410-0'
 , 2018
 , (SELECT author_id FROM author WHERE CONCAT(author_fname, ' ', author_lname) = 'A. Carter')
-, (SELECT author_id FROM author WHERE author_fname = 'A' and author_lname = 'Carter')
 ),
 ( 'Journey Through Time'
 , '978-0-262-13472-9'
